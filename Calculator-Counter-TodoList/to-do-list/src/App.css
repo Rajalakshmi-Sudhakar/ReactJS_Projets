@@ -1,0 +1,20 @@
+header {
+  background-color: #7b51ec; /* Sets the background color */
+  color: white; /* Sets the text color */
+  padding: 20px; /* Adds padding inside the header */
+  text-align: center; /* Centers the text */
+  font-size: 24px; /* Increases font size */
+  font-family: Arial, sans-serif; /* Sets the font */
+}
+section {
+  background-color: #f9f9f9; /* Light grey background */
+  padding: 40px; /* Adds padding inside the section */
+  margin: 20px auto; /* Adds space outside the section and centers it */
+  max-width: 1200px; /* Sets a maximum width for large screens */
+  border-radius: 10px; /* Smooth, rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+  display: flex; /* Enable Flexbox */
+  flex-direction: column; /* Align items in a column */
+  justify-content: center; /* Center content vertically */
+  align-items: center;
+}

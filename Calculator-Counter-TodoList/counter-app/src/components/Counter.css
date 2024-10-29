@@ -1,0 +1,50 @@
+/* Button group styling */
+.button-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* General button styling */
+.btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  font-size: 18px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Plus and Minus button specific styles */
+.btn.plus {
+  color: green;
+}
+
+.btn.minus {
+  color: red;
+}
+
+/* Hover effect */
+.btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Input field styling */
+.input-number {
+  width: 50px;
+  text-align: center;
+  border: 1px solid #ccc;
+  height: 40px;
+  margin: 0 10px;
+  font-size: 18px;
+}
+
+/* Additional button styles for focus and active states */
+.btn:focus {
+  border: 2px solid #007bff;
+}
+
+.btn:active {
+  background-color: #d0d0d0;
+}
