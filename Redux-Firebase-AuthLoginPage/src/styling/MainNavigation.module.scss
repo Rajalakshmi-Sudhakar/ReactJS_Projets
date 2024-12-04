@@ -1,0 +1,33 @@
+$header-background: #cce7ff; // Light blue background
+$header-text-color: #094f66; // Dark blue text color
+$active-link-color: #094f66; // Same dark blue for active links
+$link-hover-color: #0066cc; // Slightly darker blue for hover effect
+$header-padding: 15px;
+
+.header {
+  background-color: $header-background;
+  color: $header-text-color;
+  padding: $header-padding;
+  display: flex;
+  justify-content: flex-end; // Align the link to the right
+  align-items: center;
+
+  a {
+    text-decoration: none;
+    color: $header-text-color;
+    font-size: 18px;
+    font-weight: 500;
+    margin-right: 20px; // Spacing for multiple links
+    transition: color 0.3s;
+
+    &:hover {
+      color: $link-hover-color;
+    }
+
+    &.active {
+      font-weight: bold;
+      color: $active-link-color;
+      border-bottom: 2px solid $active-link-color; // Adds a subtle underline
+    }
+  }
+}

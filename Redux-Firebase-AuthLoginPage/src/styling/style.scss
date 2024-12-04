@@ -1,0 +1,91 @@
+$image-width: 100px;
+$button-color: #094f66; // Light blue for buttons
+$box-border-color: #ccc; // Light gray for the box border
+$box-background: #f9f9f9; // Subtle off-white background for the box
+$label-color: #333; // Dark gray for labels
+$input-border-color: #ddd; // Light gray for inputs
+$input-focus-border: #80bfff; // Slightly darker blue for focused inputs
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #eef5ff; // Light background for the page
+
+  .login-logo {
+    margin-bottom: 20px;
+
+    img {
+      width: $image-width;
+      height: auto;
+
+      @media (prefers-reduced-motion: no-preference) {
+        animation: App-logo-spin infinite 20s linear;
+      }
+    }
+  }
+
+  .login-box {
+    width: 300px;
+    padding: 20px;
+    background-color: $box-background;
+    border: 2px solid $box-border-color;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    form {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        margin-bottom: 5px;
+        color: $label-color;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      input {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid $input-border-color;
+        border-radius: 4px;
+        font-size: 14px;
+        color: $label-color;
+
+        &:focus {
+          outline: none;
+          border-color: $input-focus-border;
+          box-shadow: 0 0 3px $input-focus-border;
+        }
+      }
+
+      button {
+        padding: 10px;
+        background-color: $button-color;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: darken($button-color, 10%);
+        }
+      }
+    }
+  }
+}
