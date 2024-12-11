@@ -2,7 +2,12 @@ import classes from "../styling/Modal.module.scss";
 //import { useRef } from "react";
 import { Form } from "react-router-dom";
 
-export default function BrandModal({ onClose, onSubmit }) {
+export default function BrandModal({
+  onClose,
+  onSubmit,
+  prePopulatedData,
+  isEditState,
+}) {
   //const bnameRef = useRef();
   //const statusRef = useRef();
 
@@ -10,7 +15,7 @@ export default function BrandModal({ onClose, onSubmit }) {
     <div className={classes.overlay}>
       <div className={classes.modal}>
         <div className={classes.header}>
-          <h3>Add Brand</h3>
+          <h3>{isEditState ? "Edit Brand" : "Add Brand"}</h3>
           <button onClick={onClose} className={classes.closeButton}>
             &times;
           </button>
@@ -23,19 +28,25 @@ export default function BrandModal({ onClose, onSubmit }) {
                 type="text"
                 id="brandName"
                 name="brandName"
-                //ref={bnameRef}
+                defaultValue={prePopulatedData?.brandName || ""} //ref={bnameRef}
                 required
               />
             </div>
             <div className={classes["form-group"]}>
               <label htmlFor="status">Status:</label>
-              <select id="status" name="status">
+              <select
+                id="status"
+                name="status"
+                defaultValue={prePopulatedData?.status || "Active"}
+              >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
             <div className={classes["form-actions"]}>
-              <button type="submit">Add Brand</button>
+              <button type="submit">
+                {isEditState ? "Update Brand" : "Add Brand"}
+              </button>
               <button type="button" onClick={onClose}>
                 Cancel
               </button>

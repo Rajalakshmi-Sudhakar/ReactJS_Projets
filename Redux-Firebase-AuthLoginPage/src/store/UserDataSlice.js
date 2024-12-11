@@ -46,6 +46,25 @@ export const deleteBrandInDB = createAsyncThunk(
   }
 );
 
+// Async Thunk: Update existing brand data in DB
+export const updateBrandInDB = createAsyncThunk(
+  "uData/updateBrandInDB",
+  async ({ brandId, updatedData }, { rejectWithValue }) => {
+    try {
+      // Reference to the brand entry in Firebase using the brandId
+      const brandRef = ref(database, `brands/${brandId}`);
+
+      // Update the existing brand data in Firebase (e.g., update quantity)
+      await update(brandRef, updatedData);
+
+      // Return the updated data with the brandId for further use
+      return { id: brandId, ...updatedData };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 // Async Thunk: get brand data from cart
 export const getBrandDataFromDB = createAsyncThunk(
   "uData/getBrandDataFromDB",
@@ -258,6 +277,22 @@ const dataSlice = createSlice({
       .addCase(getBrandDataFromDB.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(updateBrandInDB.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateBrandInDB.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.brandDB.findIndex(
+          (brand) => brand.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.brandDB[index] = action.payload; // Replace the updated entry
+        }
+      })
+      .addCase(updateBrandInDB.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to update brand data";
       })
       .addCase(addDeviceToDB.pending, (state) => {
         state.status = "loading";

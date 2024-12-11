@@ -4,6 +4,7 @@ import {
   addBrandToDB,
   getBrandDataFromDB,
   deleteBrandInDB,
+  updateBrandInDB,
 } from "../store/UserDataSlice.js";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -26,6 +27,8 @@ export default function BrandPage() {
   // console.log("logged in user's ID:", userId);
   //const { brandDB } = useSelector((state) => state.uData);
   const [isOpen, setIsOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [selectedDataToEdit, setSelectedDataToEdit] = useState(null);
   // const bnameRef = useRef();
   // const statusRef = useRef();
 
@@ -44,9 +47,10 @@ export default function BrandPage() {
 
   const handleCloseModal = () => {
     setIsOpen(false);
+    setIsEdit(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsOpen(false);
     const fd = new FormData(e.target);
@@ -62,12 +66,49 @@ export default function BrandPage() {
     );
 
     if (!isDuplicate) {
-      dispatch(addBrandToDB(brandObject));
-      dispatch(getBrandDataFromDB());
+      try {
+        await dispatch(addBrandToDB(brandObject)).unwrap();
+        await dispatch(getBrandDataFromDB()).unwrap();
+      } catch (error) {
+        console.log("Error adding Brand Data", error);
+      }
     } else {
       alert("Brand already added!");
     }
-    dispatch(getBrandDataFromDB());
+    //dispatch(getBrandDataFromDB());
+  };
+
+  const handleEdit = (brandId) => {
+    console.log("Edit Icon clicked on row:", brandId);
+    const brandEditData = brandDB.find((brand) => brand.id === brandId);
+    if (brandEditData) {
+      console.log("Brand edit data:", brandEditData);
+      setSelectedDataToEdit(brandEditData);
+    }
+    setIsEdit(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setIsEdit(false);
+    const fd = new FormData(e.target);
+    const brandToEditObject = { id: selectedDataToEdit.id, uId: userId };
+    fd.forEach((value, key) => {
+      brandToEditObject[key] = value;
+    });
+    console.log("Brand to be edited object", brandToEditObject);
+    try {
+      await dispatch(
+        updateBrandInDB({
+          brandId: brandToEditObject.id,
+          updatedData: brandToEditObject,
+        })
+      ).unwrap();
+
+      await dispatch(getBrandDataFromDB()).unwrap();
+    } catch (error) {
+      console.error("Error updating brand data:", error);
+    }
   };
 
   const handleDelete = (brandId) => {
@@ -93,33 +134,15 @@ export default function BrandPage() {
     <>
       {isOpen && (
         <BrandModal onClose={handleCloseModal} onSubmit={handleSubmit} />
-        /*<Modal title="Brand New Brand" onClose={handleCloseModal}>
-          <Form onSubmit={handleSubmit}>
-            <div className={classes["form-group"]}>
-              <label htmlFor="brandName">Brand Name:</label>
-              <input
-                type="text"
-                id="brandName"
-                name="brandName"
-                ref={bnameRef}
-                required
-              />
-            </div>
-            <div className={classes["form-group"]}>
-              <label htmlFor="status">Status:</label>
-              <select id="status" name="status" ref={statusRef}>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-            </div>
-            <div className={classes["form-actions"]}>
-              <button type="submit">Add Brand</button>
-              <button type="button" onClick={handleCloseModal}>
-                Cancel
-              </button>
-            </div>
-          </Form>
-        </Modal>*/
+      )}
+
+      {isEdit && (
+        <BrandModal
+          onClose={handleCloseModal}
+          onSubmit={handleEditSubmit}
+          prePopulatedData={selectedDataToEdit}
+          isEditState={isEdit}
+        />
       )}
 
       <div>
@@ -160,7 +183,10 @@ export default function BrandPage() {
                     <td>{brand.brandName}</td>
                     <td>{brand.status}</td>
                     <td>
-                      <button onClick={() => {}} className="icon-button">
+                      <button
+                        onClick={() => handleEdit(brand.id)}
+                        className="icon-button"
+                      >
                         <EditIcon fontSize="small" titleAccess="Edit" />
                       </button>
                       <button

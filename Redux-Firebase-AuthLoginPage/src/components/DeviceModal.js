@@ -3,12 +3,12 @@ import classes from "../styling/Modal.module.scss";
 import { Form } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function BrandModal({ onClose, onSubmit }) {
-  //   const deviceRef = useRef();
-  //   const statusRef = useRef();
-  //   const brandRef = useRef();
-  //   const quantityRef = useRef();
-
+export default function BrandModal({
+  onClose,
+  onSubmit,
+  prePopulatedData,
+  isEditState,
+}) {
   const { brandDB } = useSelector((state) => state.uData);
 
   const { userId } = useSelector((state) => state.auth);
@@ -17,7 +17,7 @@ export default function BrandModal({ onClose, onSubmit }) {
     <div className={classes.overlay}>
       <div className={classes.modal}>
         <div className={classes.header}>
-          <h3>Add Device</h3>
+          <h3>{isEditState ? "Edit Device" : "Add Device"}</h3>
           <button onClick={onClose} className={classes.closeButton}>
             &times;
           </button>
@@ -29,7 +29,11 @@ export default function BrandModal({ onClose, onSubmit }) {
               <select
                 id="existingBrand"
                 name="brand"
-                defaultValue="Select an existing brand"
+                defaultValue={
+                  isEditState
+                    ? prePopulatedData?.brand
+                    : "Select an exisitng brand"
+                }
               >
                 {/* <option value="" disabled selected>
                   Select an existing brand
@@ -55,13 +59,18 @@ export default function BrandModal({ onClose, onSubmit }) {
                 type="text"
                 id="device"
                 name="device"
+                defaultValue={prePopulatedData?.device || ""}
                 //ref={deviceRef}
                 required
               />
             </div>
             <div className={classes["form-group"]}>
               <label htmlFor="status">Status:</label>
-              <select id="status" name="status">
+              <select
+                id="status"
+                name="status"
+                defaultValue={prePopulatedData?.status || ""}
+              >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
@@ -72,12 +81,15 @@ export default function BrandModal({ onClose, onSubmit }) {
                 type="number"
                 id="quantity"
                 name="quantity"
+                defaultValue={prePopulatedData?.quantity || ""}
                 //ref={quantityRef}
                 required
               />
             </div>
             <div className={classes["form-actions"]}>
-              <button type="submit">Add Device</button>
+              <button type="submit">
+                {isEditState ? "Update Device" : "Add Device"}
+              </button>
               <button type="button" onClick={onClose}>
                 Cancel
               </button>

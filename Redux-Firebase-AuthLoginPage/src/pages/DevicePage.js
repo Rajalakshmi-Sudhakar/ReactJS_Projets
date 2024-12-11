@@ -17,6 +17,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function DevicePage() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editData, setEditData] = useState(null);
   const { userId } = useSelector((state) => state.auth);
   const { deviceDB, status, error, dashboardDB } = useSelector(
     (state) => state.uData
@@ -36,8 +38,43 @@ export default function DevicePage() {
     setIsOpen(true);
   };
 
+  const handleEditDevice = (deviceId) => {
+    console.log("Device edit icon clicked for row id:", deviceId);
+    const DeviceEditData = deviceDB.find(
+      (device) => device.deviceId === deviceId
+    );
+    if (DeviceEditData) {
+      console.log("device edit data:", DeviceEditData);
+      setEditData(DeviceEditData);
+    }
+    setIsEdit(true);
+  };
   const handleCloseModal = () => {
     setIsOpen(false);
+    setIsEdit(false);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setIsEdit(false);
+    const fd = new FormData(e.target);
+    const deviceToEditObject = { id: editData.deviceId, uId: userId };
+    fd.forEach((value, key) => {
+      deviceToEditObject[key] = value;
+    });
+    console.log("device to be edited object", deviceToEditObject);
+    try {
+      await dispatch(
+        updateDeviceInDB({
+          deviceId: deviceToEditObject.id,
+          updatedData: deviceToEditObject,
+        })
+      ).unwrap();
+
+      await dispatch(getDeviceDataFromDB()).unwrap();
+    } catch (error) {
+      console.error("Error updating brand data:", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -75,25 +112,33 @@ export default function DevicePage() {
       };
 
       // Dispatch an action to update the existing entry in the DB
-      dispatch(
-        updateDeviceInDB({
-          deviceId: existingDeviceId,
-          updatedData: updatedDevice,
-        })
-      );
-      console.log("updatedDevice:", updatedDevice);
-      dispatch(getDeviceDataFromDB());
+      try {
+        await dispatch(
+          updateDeviceInDB({
+            deviceId: existingDeviceId,
+            updatedData: updatedDevice,
+          })
+        ).unwrap();
+        console.log("updatedDevice:", updatedDevice);
+        await dispatch(getDeviceDataFromDB()).unwrap();
+      } catch (error) {
+        console.log("updateDeviceInDB error", error);
+      }
 
       if (exisitingDashboardData) {
         console.log("exisitingDashBoardData", exisitingDashboardData);
-        dispatch(
-          updateDashboardInDB({
-            dashboardId: exisitingDashboardData.id,
-            updatedData: updatedDevice,
-          })
-        );
-        dispatch(getDashboardDataFromDB());
-        console.log("updatedDevice:", updatedDevice);
+        try {
+          await dispatch(
+            updateDashboardInDB({
+              dashboardId: exisitingDashboardData.id,
+              updatedData: updatedDevice,
+            })
+          ).unwrap();
+          await dispatch(getDashboardDataFromDB()).unwrap();
+          console.log("updatedDevice:", updatedDevice);
+        } catch (error) {
+          console.log("Update Dashboard in DB error:", error);
+        }
       }
     } else {
       console.log("formData", deviceObject);
@@ -113,7 +158,7 @@ export default function DevicePage() {
     }
   };
 
-  const handleDelete = (deviceId) => {
+  const handleDelete = async (deviceId) => {
     const device = deviceDB.find((data) => data.deviceId === deviceId);
     if (!device) {
       console.error("Device not found for ID:", deviceId);
@@ -137,25 +182,36 @@ export default function DevicePage() {
         quantity: deviceQuantity, // decrement the quantity
       };
 
-      dispatch(
-        updateDeviceInDB({
-          deviceId: device.deviceId,
-          updatedData: updatedDevice,
-        })
-      );
+      try {
+        await dispatch(
+          updateDeviceInDB({
+            deviceId: device.deviceId,
+            updatedData: updatedDevice,
+          })
+        ).unwrap();
 
-      dispatch(getDeviceDataFromDB());
+        await dispatch(getDeviceDataFromDB()).unwrap();
 
-      dispatch(
-        updateDashboardInDB({
-          deviceId: device.deviceId,
-          updatedData: updatedDevice,
-        })
-      );
-      dispatch(getDashboardDataFromDB()); // Refresh local state
+        await dispatch(
+          updateDashboardInDB({
+            deviceId: device.deviceId,
+            updatedData: updatedDevice,
+          })
+        ).unwrap();
+        await dispatch(getDashboardDataFromDB()).unwrap();
+        // Refresh local state
+      } catch (error) {
+        console.log("error updating deltion quantity data", error);
+      }
     } else {
-      dispatch(deleteDeviceInDB(deviceId));
-      dispatch(deleteDashboardInDB(dashboardDataId));
+      try {
+        await dispatch(deleteDeviceInDB(deviceId)).unwrap();
+        await dispatch(getDeviceDataFromDB()).unwrap();
+        await dispatch(deleteDashboardInDB(dashboardDataId)).unwrap();
+        await dispatch(getDashboardDataFromDB()).unwrap();
+      } catch (error) {
+        console.log("error deleting data", error);
+      }
     }
   };
 
@@ -163,6 +219,15 @@ export default function DevicePage() {
     <>
       {isOpen && (
         <DeviceModal onClose={handleCloseModal} onSubmit={handleSubmit} />
+      )}
+
+      {isEdit && (
+        <DeviceModal
+          onClose={handleCloseModal}
+          onSubmit={handleEditSubmit}
+          prePopulatedData={editData}
+          isEditState={isEdit}
+        />
       )}
       <div>
         <div className={classes.container}>
@@ -205,7 +270,12 @@ export default function DevicePage() {
                     <td>{device.status}</td>
                     <td>{device.quantity}</td>
                     <td>
-                      <button onClick={() => {}} className="icon-button">
+                      <button
+                        onClick={() => {
+                          handleEditDevice(device.deviceId);
+                        }}
+                        className="icon-button"
+                      >
                         <EditIcon fontSize="small" titleAccess="Edit" />
                       </button>
                       <button
