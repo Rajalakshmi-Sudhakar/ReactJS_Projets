@@ -1,0 +1,56 @@
+.table {
+  width: 100%; /* Full-width table */
+  border-collapse: collapse; /* Remove default spacing between table cells */
+  margin: 25px 0; /* Add some space above and below the table */
+  font-size: 18px; /* Font size */
+  text-align: left; /* Align text to the left */
+
+  th,
+  td {
+    padding: 12px 15px; /* Add padding to cells */
+  }
+
+  thead {
+    background-color: #094f66; /* Header background color */
+    color: #ffffff; /* Header text color */
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #dddddd; /* Row separator */
+
+    &:nth-of-type(even) {
+      background-color: #f3f3f3; /* Zebra stripe effect */
+    }
+
+    &:hover {
+      background-color: #f1f1f1; /* Row highlight on hover */
+    }
+  }
+}
+
+.container {
+  display: flex;
+  justify-content: space-between; /* Space between the heading and button */
+  align-items: center; /* Vertically align items in the container */
+
+  h2 {
+    margin: 0; /* Remove default margin from the heading */
+  }
+
+  .container-button {
+    font-weight: bold;
+    text-align: center; /* Align text inside the button */
+    background-color: #cce7ff; /* Optional: Add a background */
+    color: #094f66; /* Optional: Add a text color */
+    border: none; /* Remove default border */
+    padding: 10px 15px; /* Add padding to the button */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      background-color: lighten(#cce7ff, 10%);
+      color: #0066cc;
+    }
+  }
+}

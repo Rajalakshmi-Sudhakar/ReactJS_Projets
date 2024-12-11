@@ -1,0 +1,56 @@
+/* SidebarLayout.module.scss */
+
+.container {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  width: 100%; /* Full width */
+  overflow: hidden; /* Avoid scrolling issues */
+}
+
+.sidebar {
+  width: 15%; /* Sidebar takes up 25% of the width */
+  height: 100%;
+  background-color: #cce7ff; /* bg-stone-900 */
+  color: #094f66; /* text-stone-50 */
+  padding: 20px; /* Space inside sidebar */
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Space between navigation links */
+  border-right: 1px solid #a8a29e; /* Divider line */
+
+  a {
+    text-decoration: none;
+    color: #094f66;
+    font-size: 18px;
+    font-weight: 500;
+    //margin-right: 20px; // Spacing for multiple links
+    transition: color 0.3s;
+
+    &:hover {
+      color: #0066cc;
+    }
+
+    &.active {
+      font-weight: bold;
+      color: #094f66;
+      //border-bottom: 2px solid #094f66; // Adds a subtle underline
+    }
+  }
+}
+
+.content {
+  flex: 1;
+  //height: 100vh;
+  //width: 75%; /* Main content takes up the rest */
+  padding: 20px; /* Add spacing inside content area */
+  background-color: #f5f5f4; /* Light background for content */
+  overflow-y: auto; /* Enable vertical scrolling if needed */
+}
+
+// .content {
+//   height: 100vh; /* h-screen */
+//   margin: 2rem 0; /* my-8 (8 * 0.25rem) */
+//   display: flex; /* flex */
+//   gap: 2rem; /* gap-8 (8 * 0.25rem) */
+//   background-color: #f5f5f4;
+// }

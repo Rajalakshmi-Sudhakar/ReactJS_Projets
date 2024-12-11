@@ -33,11 +33,16 @@ export const loginUser = createAsyncThunk(
       for (const userId in users) {
         const user = users[userId];
         if (user.email === email && user.password === password) {
-          console.log("Login success");
+          console.log("Login success", userId);
 
           const token = `${userId}-auth-token`;
           localStorage.setItem("authToken", token);
-          return { email: user.email, username: user.username, token };
+          return {
+            email: user.email,
+            username: user.username,
+            userId: userId,
+            token,
+          };
         }
       }
 
@@ -54,6 +59,7 @@ const authSlice = createSlice({
     user: null,
     status: "idle",
     error: null,
+    userId: null,
     token: null,
   },
   reducers: {
@@ -62,6 +68,7 @@ const authSlice = createSlice({
       state.status = "idle";
       state.token = null;
       state.error = null;
+      state.userId = null;
       localStorage.removeItem("authToken");
     },
   },
@@ -84,6 +91,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user = action.payload;
+        state.userId = action.payload.userId;
         state.token = action.payload.token;
       })
       .addCase(loginUser.rejected, (state, action) => {

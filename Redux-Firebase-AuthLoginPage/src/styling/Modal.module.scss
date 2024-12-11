@@ -1,0 +1,120 @@
+/* Modal.module.scss */
+
+/* Overlay to dim the background */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal styling */
+.modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 400px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    h3 {
+      margin: 0;
+    }
+
+    .closeButton {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #333;
+
+      &:hover {
+        color: #dc3545; /* Red hover effect */
+      }
+    }
+  }
+
+  .content {
+    .form-group {
+      margin-bottom: 15px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #094f66; /* Dark blue */
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #094f66; /* Dark blue */
+        background-color: #f9fbfd; /* Light background for fields */
+
+        &:focus {
+          border-color: #0066cc; /* Blue focus */
+          outline: none;
+          box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+
+      button {
+        font-weight: bold;
+        text-align: center;
+        background-color: #cce7ff; /* Light blue background */
+        color: #094f66; /* Dark blue text */
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &:hover {
+          background-color: lighten(#cce7ff, 10%);
+          color: #0066cc; /* Hover effect */
+        }
+
+        &:first-child {
+          background-color: #007bff; /* Primary blue for submit */
+          color: #fff;
+
+          &:hover {
+            background-color: lighten(#007bff, 10%);
+          }
+        }
+
+        &:last-child {
+          background-color: #dc3545; /* Red for cancel */
+          color: #fff;
+
+          &:hover {
+            background-color: lighten(#dc3545, 10%);
+          }
+        }
+      }
+    }
+  }
+}
