@@ -27,7 +27,7 @@ export default function DashBoard() {
   );
 
   useEffect(() => {
-    console.log("Fetched deviceDB from Redux:", dashboardDB);
+    console.log("Fetched dashboardDB from Redux:", dashboardDB);
   }, [dashboardDB]);
 
   return (

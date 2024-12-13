@@ -19,6 +19,7 @@ export default function DevicePage() {
   const [isOpen, setIsOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [dashboardEditData, setDashboardEditData] = useState(null);
   const { userId } = useSelector((state) => state.auth);
   const { deviceDB, status, error, dashboardDB } = useSelector(
     (state) => state.uData
@@ -47,6 +48,13 @@ export default function DevicePage() {
       console.log("device edit data:", DeviceEditData);
       setEditData(DeviceEditData);
     }
+    const DashboardEditData = dashboardDB.find(
+      (data) => data.deviceId === deviceId
+    );
+    if (DashboardEditData) {
+      console.log("DashBoardEditData", DashboardEditData);
+      setDashboardEditData(DashboardEditData);
+    }
     setIsEdit(true);
   };
   const handleCloseModal = () => {
@@ -58,20 +66,67 @@ export default function DevicePage() {
     e.preventDefault();
     setIsEdit(false);
     const fd = new FormData(e.target);
-    const deviceToEditObject = { id: editData.deviceId, uId: userId };
+    const deviceToEditObject = { uId: userId };
     fd.forEach((value, key) => {
       deviceToEditObject[key] = value;
     });
+
     console.log("device to be edited object", deviceToEditObject);
+
+    //console.log("Dashboard to be edited object", dashboardToEditObject);
+
+    // const existingDeviceTobeEdited = deviceDB.find(
+    //   (device) =>
+    //     device.uId === deviceToEditObject.uId &&
+    //     device.brand === deviceToEditObject.brand &&
+    //     device.device === deviceToEditObject.device
+    // );
+    // console.log("Device to be edited:", existingDeviceTobeEdited);
+
+    // //if (existingDeviceTobeEdited) {
+    // const existingDeviceTObeEditedId = existingDeviceTobeEdited.id;
+    // console.log("existingDeviceTobeEditedID:", existingDeviceTObeEditedId);
+
+    const exisitingDeviceTobeEditedId = editData.deviceId;
+    if (exisitingDeviceTobeEditedId) {
+      console.log("device to be edited id: ", exisitingDeviceTobeEditedId);
+    }
+
+    const exisitingDashboardTobeEditedId = dashboardEditData.id;
+    if (exisitingDashboardTobeEditedId) {
+      console.log("dashboard to be edited: ", exisitingDashboardTobeEditedId);
+    }
+
+    // const exisitingDashboardTobeEdited = dashboardDB.find(
+    //   (dashboardData) => dashboardData.deviceId === existingDeviceTobeEdited
+    // );
+
+    const dashboardToEditObject = {
+      uId: userId,
+      deviceId: exisitingDeviceTobeEditedId,
+    };
+    fd.forEach((value, key) => {
+      dashboardToEditObject[key] = value;
+    });
+
+    console.log("exisitingDashboardTobeEdited Object", dashboardToEditObject);
+
     try {
       await dispatch(
         updateDeviceInDB({
-          deviceId: deviceToEditObject.id,
+          deviceId: exisitingDeviceTobeEditedId,
           updatedData: deviceToEditObject,
         })
       ).unwrap();
 
       await dispatch(getDeviceDataFromDB()).unwrap();
+      await dispatch(
+        updateDashboardInDB({
+          dashboardId: exisitingDashboardTobeEditedId,
+          updatedData: dashboardToEditObject,
+        })
+      ).unwrap();
+      await dispatch(getDashboardDataFromDB()).unwrap();
     } catch (error) {
       console.error("Error updating brand data:", error);
     }
@@ -149,6 +204,10 @@ export default function DevicePage() {
         await dispatch(
           addDashboardDataToDB({ deviceId, dashBoardData: deviceObject })
         );
+        console.log("**addDashB data**", {
+          deviceId,
+          dashBoardData: deviceObject,
+        });
       } else {
         console.error("Failed to add device:", result.error.message);
       }
@@ -165,7 +224,7 @@ export default function DevicePage() {
       return; // Exit if no matching device
     }
     const dashboardData = dashboardDB.find(
-      (data) => data.deviceId === device.deviceId
+      (data) => data.deviceId === deviceId
     );
     if (!dashboardData) {
       console.error("DashboardData not found for ID:", deviceId);
@@ -173,13 +232,15 @@ export default function DevicePage() {
     }
     const dashboardDataId = dashboardData.id;
     console.log("device to be deleted:", device);
+    console.log("dashboardData to be deleted:", dashboardData);
+    console.log("dashboard id in handledelete function", dashboardDataId);
 
     let deviceQuantity = device.quantity;
     if (deviceQuantity > 1) {
-      deviceQuantity--;
+      Number(deviceQuantity--);
       const updatedDevice = {
         ...device,
-        quantity: deviceQuantity, // decrement the quantity
+        quantity: String(deviceQuantity), // decrement the quantity
       };
 
       try {
@@ -194,7 +255,7 @@ export default function DevicePage() {
 
         await dispatch(
           updateDashboardInDB({
-            deviceId: device.deviceId,
+            dashboardId: dashboardDataId,
             updatedData: updatedDevice,
           })
         ).unwrap();
@@ -205,6 +266,11 @@ export default function DevicePage() {
       }
     } else {
       try {
+        console.log(
+          "else part of delete item device Id, dashboardId:",
+          deviceId,
+          dashboardDataId
+        );
         await dispatch(deleteDeviceInDB(deviceId)).unwrap();
         await dispatch(getDeviceDataFromDB()).unwrap();
         await dispatch(deleteDashboardInDB(dashboardDataId)).unwrap();
